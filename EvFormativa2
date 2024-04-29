@@ -1,0 +1,63 @@
+precios = {
+    "Pikachu Roll": 4500,
+    "Otaku Roll": 5000,
+    "Pulpo Venenoso Roll": 5200,
+    "Anguila Eléctrica Roll": 4800
+}
+
+def mostrar_menu():
+    print("MENU:")
+    for i, (roll, precio) in enumerate(precios.items(), 1):
+        print(f"{i}. {roll} ${precio}")
+
+def hacer_pedido():
+    pedido = {}
+    while True:
+        mostrar_menu()
+        opcion = input("Seleccione un Roll (1-4) o 'S' para finalizar el pedido: ")
+        if opcion.lower() == 's':
+            break
+        elif opcion.isdigit() and 1 <= int(opcion) <= 4:
+            roll_elegido = list(precios.keys())[int(opcion) - 1]
+            pedido[roll_elegido] = pedido.get(roll_elegido, 0) + 1
+        else:
+            print("Opción inválida. Por favor, seleccione un número del 1 al 4.")
+
+    return pedido
+
+def aplicar_descuento(total):
+    descuento = 0
+    codigo = input("¿Tiene un código de descuento? (Ingrese 'su codigo' o 'X' para salir): ")
+    if codigo.lower() == 'soyotaku':
+        descuento = total * 0.1
+        print("Descuento aplicado.")
+    elif codigo.lower() != 'x':
+        print("Código no válido.")
+        aplicar_descuento(total)  
+    return descuento
+
+def mostrar_detalle_pedido(pedido, subtotal, descuento):
+    print("******************************")
+    print("DETALLE DEL PEDIDO:")
+    print("******************************")
+    for roll, cantidad in pedido.items():
+        print(f"{roll}: {cantidad}")
+    print("******************************")
+    print(f"Subtotal por pagar: ${subtotal}")
+    print(f"Descuento por código: ${descuento}")
+    print(f"TOTAL: ${subtotal - descuento}")
+    print("******************************")
+
+def main():
+    while True:
+        print("¡Bienvenido al delivery de Sushi!")
+        pedido = hacer_pedido()
+        total = sum(precio * cantidad for precio, cantidad in zip(precios.values(), pedido.values()))
+        descuento = aplicar_descuento(total)
+        mostrar_detalle_pedido(pedido, total, descuento)
+        opcion = input("¿Desea realizar otro pedido? (Sí o No): ")
+        if opcion.lower() != 'si':
+            break
+
+if __name__ == "__main__":
+    main()
